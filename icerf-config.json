@@ -2,9 +2,9 @@
   "minimumVersion": "1.0.0",
   "updateTitle": "يتوفر تحديث جديد",
   "updateMessage": "قم بتحديث i CERF للحصول على أحدث المميزات والتحسينات.",
-  "latestVersion": "1.0.9",
+  "latestVersion": "1.0.10",
   "updateURL": "https://github.com/xte1/icerf-store/releases/latest",
-  "ipaURL": "https://github.com/xte1/icerf-store/releases/download/v1.0.9/iCERF.ipa",
+  "ipaURL": "https://github.com/xte1/icerf-store/releases/download/v1.0.10/iCERF.ipa",
   "messages": [
     {
       "id": "42683746493",
