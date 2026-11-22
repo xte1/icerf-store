@@ -151,6 +151,8 @@ jobs:
         run: |
           set -euo pipefail
 
+          exec > >(tee "$GITHUB_WORKSPACE/prep.log") 2>&1
+
           echo "mode=none" >> "$GITHUB_OUTPUT"
 
           if [[ -z "${PROJECT_PATH// }" ]]; then PROJECT_PATH="."; fi
@@ -953,7 +955,15 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
           if [[ "$COUNT" -eq 0 ]]; then
-            echo "::error::No screenshots were captured. Open the first red step above, or download test.log from the artifact."
+            if [[ "${MODE:-none}" == "none" ]]; then
+              echo "---- Why the project could not be prepared (last lines of prep.log) ----"
+              tail -n 40 "$GITHUB_WORKSPACE/prep.log" 2>/dev/null || echo "prep.log missing"
+              REASON=$(grep -E "error|Error|Nothing to capture|not found" "$GITHUB_WORKSPACE/prep.log" 2>/dev/null | tail -n 3 | tr '\n' ' ' || true)
+              echo "::error::Project preparation failed: ${REASON:-see prep.log in the artifact}"
+              echo "- Reason: ${REASON:-unknown}" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "::error::No screenshots were captured. See test.log / fallback-build.log in the artifact."
+            fi
             exit 1
           fi
 
@@ -1041,6 +1051,7 @@ jobs:
             Screenshots/
             test.log
             fallback-build.log
+            prep.log
             ${{ runner.temp }}/Preview.xcresult/
           if-no-files-found: warn
           retention-days: 7
